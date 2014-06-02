@@ -13,36 +13,34 @@ def p2c(pickle_in, csv_out):
 def dicts_to_df(dat):
     """descends a list of identically structured dictionaries and returns a dataframe with unique column names"""
     cols = descend_dict_keys(dat[0])
-    li = [descend_dict_values(dat[i]) for i in range(len(dat))]
+    li = [descend_dict_values(d) for d in dat]
     return  pd.DataFrame(li, columns = cols)
 
-def descend_dict_keys(obj, s='', connector='_'):
+def descend_dict_keys(obj, s=(), connector='_'):
     """descends a python dictionary or list and generates a unique key for every item in the dict"""
     keys=[]
     if type(obj) is dict:
-        for k in obj.iterkeys():
-            keys.extend(descend_dict_keys(
-                obj[k], "%s%s%s" % (s,connector,k), connector))
+        for k,v in obj.iteritems():
+            keys.extend(descend_dict_keys(v, s+(k,), connector))
     elif type(obj) is list or type(obj) is tuple or isinstance(obj,pd.np.ndarray):
         for i in range(len(obj)):
-            keys.extend(descend_dict_keys(
-                obj[i], "%s%s%s" % (s,connector,i), connector))
+            keys.extend(descend_dict_keys(obj[i], s+(str(i),), connector))
     else:
-        return [s]
+        return [connector.join(s)]
     return keys
 
 def descend_dict_values(obj):
-    """descends a python dictionary or list and generates a unique key for every item in the dict"""
-    keys=[]
+    """descends a python dictionary or list and returns a list of every non-dictlike or arraylike value"""
+    vs=[]
     if type(obj) is dict:
         for k in obj.iterkeys():
-            keys.extend(descend_dict_values(obj[k]))
+            vs.extend(descend_dict_values(obj[k]))
     elif type(obj) is list or type(obj) is tuple or isinstance(obj,pd.np.ndarray):
         for i in range(len(obj)):
-            keys.extend(descend_dict_values(obj[i]))
+            vs.extend(descend_dict_values(obj[i]))
     else:
         return [obj]
-    return keys
+    return vs
 
 if __name__=="__main__":
     if len(sys.argv) == 3:
