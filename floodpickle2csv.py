@@ -1,21 +1,20 @@
 #!/usr/bin/env python
 
-import pickle
 import pandas as pd
-
-# PICKLE FORMAT
-# data[unit_nr][data][ssp][rcp][gcm][period] : return period impact
-# values (9 return periods) in the given period for ssp/rcp/gcm combination
+import pickle
+import sys
 
 def p2c(pickle_in, csv_out):
-    """"""
+    """resaves a pickle file with a list of identically structured dictionaries as a csv"""
     with open(pickle_in) as f:
         dat = pickle.load(f)[0]
-    
+    dicts_to_df(dat).to_csv(csv_out)
+
+def dicts_to_df(dat):
+    """descends a list of identically structured dictionaries and returns a dataframe with unique column names"""
     cols = descend_dict_keys(dat[0])
     li = [descend_dict_values(dat[i]) for i in range(len(dat))]
-    df = pd.DataFrame(li, columns = cols)
-    df.to_csv(csv_out)
+    return  pd.DataFrame(li, columns = cols)
 
 def descend_dict_keys(obj, s='', connector='_'):
     """descends a python dictionary or list and generates a unique key for every item in the dict"""
@@ -46,7 +45,6 @@ def descend_dict_values(obj):
     return keys
 
 if __name__=="__main__":
-    import sys
     if len(sys.argv) == 3:
         p2c(*sys.argv[1:])
     else:
