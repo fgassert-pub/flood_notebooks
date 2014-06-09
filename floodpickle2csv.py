@@ -42,6 +42,18 @@ def descend_dict_values(obj):
         return [obj]
     return vs
 
+
+def descend_and_apply(obj, f):
+    """descends a python dictionary and applys a function f to every node"""
+    if type(obj) is dict:
+        for k in obj.iterkeys():
+            obj[k] = descend_and_apply(obj[k],f)
+    elif type(obj) is list or type(obj) is tuple:
+        for i in range(len(obj)):
+            obj[i] = descend_and_apply(obj[i],f)
+    return f(obj)
+
+
 if __name__=="__main__":
     if len(sys.argv) == 3:
         p2c(*sys.argv[1:])
