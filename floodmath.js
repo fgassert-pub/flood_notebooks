@@ -4,15 +4,15 @@ FloodMath = new function(){
 
     var _ = this,
 
-    FloodFrequencies = [.000001,.001,.002,.005,.01,.02,.05,.1,.2,.5,1/1.5];
+    FloodFrequencies = [.000001,.001,.002,.004,.01,.02,.04,.1,.2,.5,1/1.5];
 
     _.process_loss_data = function(D) {
 	// the damage data comes in as an array of values corresponding to how much loss
-	// a flood of return periods [2,5,10,20,50,100,200,500,1000] years respectively would cause
+	// a flood of return periods [2,5,10,25,50,100,250,500,1000] years respectively would cause
 	// e.g. D[0] is the damage of a flood which occurs on average every two years
 	
 	// to calculate the annual average damage, we flip the return periods over into probabilities
-	// [2,5,10,20,50,100,200,1000] becomes [1/2,1/5,...,1/1000]
+	// [2,5,10,25,50,100,250,500,1000] becomes [1/2,1/5,...,1/1000]
 	
 	// if the 2 year flood causes non-zero loss we need to add a zero damage flood at the beginning
 	// which we assume to be 1.5 yr return period
@@ -23,7 +23,7 @@ FloodMath = new function(){
 	D.push(D[D.length-1]);
 
 	// finally reverse the array so that it goes in increasing order of probability
-	// i.e. [.000001,.001,.002,.005,.01,.02,.05,.1,.2,.5,1/1.5]
+	// i.e. [.000001,.001,.002,.004,.01,.02,.05,.1,.2,.5,1/1.5]
 	D.reverse();
 
 	// return loss values
